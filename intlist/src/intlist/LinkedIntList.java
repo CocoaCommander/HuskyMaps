@@ -98,8 +98,15 @@ public class LinkedIntList {
 
     /** Moves the first integer to the back of the list. */
     public static void firstToLast(LinkedIntList L) {
-        // TODO: your code here
-        throw new UnsupportedOperationException("Not implemented yet.");
+        if (L.front != null && L.front.next != null) {
+            ListNode current = L.front;
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = L.front;
+            L.front = L.front.next;
+            current.next.next = null;
+        }
     }
 
     /**
@@ -107,8 +114,15 @@ public class LinkedIntList {
      * use 'new'.
      */
     public static void extend(LinkedIntList A, LinkedIntList B) {
-        // TODO: your code here
-        throw new UnsupportedOperationException("Not implemented yet.");
+        if (A.front != null && B.front != null) {
+            ListNode current = A.front;
+            while (current.next != null) {
+                current = current.next;
+            }
+            current.next = B.front;
+        } else if (A.front == null && B.front != null) {
+            A.front = B.front;
+        }
     }
 
     /**
@@ -116,8 +130,23 @@ public class LinkedIntList {
      * of B. May NOT modify items of A or B. Use 'new'.
      */
     public static LinkedIntList concatenated(LinkedIntList A, LinkedIntList B) {
-        // TODO: your code here
-        throw new UnsupportedOperationException("Not implemented yet.");
+        LinkedIntList C = new LinkedIntList();
+        if (A.front != null && B.front == null) {
+            C.front = A.front;
+        } else if (A.front == null && B.front != null) {
+            C.front = B.front;
+        } else if (A.front != null) {
+            ListNode aCurrent = A.front;
+            C.front = new ListNode(A.front.data);
+            ListNode cCurrent = C.front;
+            while (aCurrent.next != null) {
+                cCurrent.next = new ListNode(aCurrent.next.data);
+                cCurrent = cCurrent.next;
+                aCurrent = aCurrent.next;
+            }
+            cCurrent.next = B.front;
+        }
+        return C;
     }
 
     // You don't need to look at or understand the methods below this comment.
