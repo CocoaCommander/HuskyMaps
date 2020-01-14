@@ -35,6 +35,11 @@
 <module name="Checker">
     <property name="fileExtensions" value="java"/>
 
+    <module name="SuppressionFilter">
+        <property name="file" value="${config_loc}/suppressions.xml"/>
+        <property name="optional" value="false"/>
+    </module>
+
     <!--
         Checks for Size Violations.
         See http://checkstyle.sf.net/config_sizes.html

@@ -1,2 +1,2 @@
 rootProject.name = 'cse373'
-include 'intlist'
+include 'intlist', 'deques'

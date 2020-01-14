@@ -18,13 +18,21 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 public class BaseTest implements WithAssertions {
     public static class FormattingTestReporter {
         public static final String OUTPUT_KEY = "output";
+        public static final String DUMMY_CHARACTER = "¶";
         private final TestReporter reporter;
 
         public FormattingTestReporter(TestReporter reporter) {
             this.reporter = reporter;
         }
 
+        public  void publish() {
+            this.publish("");
+        }
+
         public void publish(String s) {
+            if (s.isBlank()) {
+                s = s + DUMMY_CHARACTER;
+            }
             this.reporter.publishEntry(OUTPUT_KEY, s);
         }
 
