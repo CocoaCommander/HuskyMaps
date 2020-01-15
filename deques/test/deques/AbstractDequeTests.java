@@ -236,8 +236,22 @@ public abstract class AbstractDequeTests extends BaseTest {
         assertThat((int) deque.removeLast()).isEqualTo(3);
         assertThat((int) deque.removeLast()).isEqualTo(2);
 
-        // TODO ArrayDeque fails here; write better tests to help you find and fix the bug
+
         int actual = deque.removeLast();
         assertThat(actual).isEqualTo(1);
+    }
+
+    @Test
+    void testFullDeque() {
+        Deque<Integer> deque = createDeque();
+        deque.addFirst(0);
+        deque.addFirst(1);
+        deque.addFirst(2);
+        deque.addFirst(3);
+        deque.addFirst(4);
+        deque.addFirst(5);
+        deque.addFirst(6);
+        deque.addFirst(7);
+        deque.addFirst(8);
     }
 }

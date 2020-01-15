@@ -15,6 +15,7 @@ public class ArrayDeque<T> extends AbstractDeque<T> {
         size = 0;
     }
 
+    // i increases by 1 in every case except for when it's length - 1, in which case it's 0
     private static int increment(int i, int length) {
         if (i == length - 1) {
             return 0;
@@ -23,6 +24,7 @@ public class ArrayDeque<T> extends AbstractDeque<T> {
         }
     }
 
+    // i decreases by 1 in every case except for when it's 0, in which case it's length - 1
     private static int decrement(int i, int length) {
         if (i == 0) {
             return length - 1;
@@ -31,6 +33,7 @@ public class ArrayDeque<T> extends AbstractDeque<T> {
         }
     }
 
+    // adds item to wherever front points to, moves front forward (increase by -1)
     public void addFirst(T item) {
         if (size == data.length) {
             resize(data.length * 2);
@@ -40,6 +43,7 @@ public class ArrayDeque<T> extends AbstractDeque<T> {
         size += 1;
     }
 
+    // adds item to wherever back points to, moves back forward (increase by +1)
     public void addLast(T item) {
         if (size == data.length) {
             resize(data.length * 2);
@@ -109,7 +113,10 @@ public class ArrayDeque<T> extends AbstractDeque<T> {
     @SuppressWarnings("unchecked")
     private void resize(int capacity) {
         T[] newData = (T[]) new Object[capacity];
-        int i = increment(front, size);
+        // int i = increment(front, size);
+        // come back to this point because resize does some weird shit with
+        // replicating the initial array
+        int i = increment(front, data.length);
         for (int newIndex = 0; newIndex < size; newIndex += 1) {
             newData[newIndex] = data[i];
             i = increment(i, size);
