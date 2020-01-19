@@ -127,6 +127,6 @@ public class ArrayDeque<T> extends AbstractDeque<T> {
     }
 
     private boolean needsDownsize() {
-        return ((double) size) / data.length < 0.25 && data.length >= 16;
+        return ((double) size) / data.length < 0.5 && data.length >= 16;
     }
 }

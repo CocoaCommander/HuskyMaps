@@ -244,14 +244,8 @@ public abstract class AbstractDequeTests extends BaseTest {
     @Test
     void testFullDeque() {
         Deque<Integer> deque = createDeque();
-        deque.addFirst(0);
-        deque.addFirst(1);
-        deque.addFirst(2);
-        deque.addFirst(3);
-        deque.addFirst(4);
-        deque.addFirst(5);
-        deque.addFirst(6);
-        deque.addFirst(7);
-        deque.addFirst(8);
+        for (int i = 0; i < 10; i++) {
+            deque.addFirst(i);
+        }
     }
 }
