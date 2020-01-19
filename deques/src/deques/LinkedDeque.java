@@ -6,13 +6,12 @@ public class LinkedDeque<T> extends AbstractDeque<T> {
     // We access these during grading to test your code.
     Node<T> front;
     Node<T> back; // may be the same as front, if you're using circular sentinel nodes
+    // TODO replace this with any additional fields you may need
 
     public LinkedDeque() {
         size = 0;
-        this.front = new Node<>(null);
-        this.back = new Node<>(null);
-        this.front.next = this.back;
-        this.back.prev = this.front;
+        // TODO: replace this with your code
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     static class Node<T> {
@@ -21,6 +20,7 @@ public class LinkedDeque<T> extends AbstractDeque<T> {
         T value;
         Node<T> next;
         Node<T> prev;
+        // TODO: replace this with any additional constructors/fields you may need
 
         Node(T value) {
             this.value = value;
@@ -30,54 +30,41 @@ public class LinkedDeque<T> extends AbstractDeque<T> {
     }
 
     public void addFirst(T item) {
+        // TODO: replace this with your code
         size += 1;
-        Node<T> newNode = new Node<>(item);
-        newNode.prev = this.front;
-        newNode.next = this.front.next;
-        this.front.next.prev = newNode;
-        this.front.next = newNode;
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     public void addLast(T item) {
+        // TODO: replace this with your code
         size += 1;
-        Node<T> newNode = new Node<>(item);
-        newNode.next = this.back;
-        newNode.prev = this.back.prev;
-        this.back.prev.next = newNode;
-        this.back.prev = newNode;
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     public T removeFirst() {
         if (size == 0) {
             return null;
         }
+        // TODO: replace this with your code
         size -= 1;
-        Node<T> removedNode = this.front.next;
-        this.front.next = this.front.next.next;
-        this.front.next.prev = this.front;
-        return removedNode.value;
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     public T removeLast() {
         if (size == 0) {
             return null;
         }
+        // TODO: replace this with your code
         size -= 1;
-        Node<T> removedNode = this.back.prev;
-        this.back.prev = this.back.prev.prev;
-        this.back.prev.next = this.back;
-        return removedNode.value;
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     public T get(int index) {
         if ((index >= size) || (index < 0)) {
             return null;
         }
-        Node<T> curr = this.front.next;
-        for (int i = 0; i < index; i++) {
-            curr = curr.next;
-        }
-        return curr.value;
+        // TODO: replace this with your code
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     public int size() {
