@@ -244,8 +244,13 @@ public abstract class AbstractDequeTests extends BaseTest {
     @Test
     void testFullDeque() {
         Deque<Integer> deque = createDeque();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 17; i++) {
             deque.addFirst(i);
+        }
+        int k = 0;
+        for (int j = 17; j > 0; j--) {
+            assertThat((int) deque.removeLast()).isEqualTo(k);
+            k++;
         }
     }
 }
