@@ -24,16 +24,17 @@ public abstract class AbstractArraySearcherTests extends BaseTest {
 
     @Test
     void findAllMatchesIn_arrayOfTerms_returnsCorrectMatch() {
-        Term[] terms = new Term[] {
-                new DefaultTerm("hello", 0),
-                new DefaultTerm("world", 0),
-                new DefaultTerm("welcome", 0),
-                new DefaultTerm("to", 0),
-                new DefaultTerm("autocomplete", 0),
-                new DefaultTerm("me", 0)
+        Term[] terms = new DefaultTerm[] {
+            new DefaultTerm("ArraySearcher", 0),
+            new DefaultTerm("Autocomplete", 0),
+            new DefaultTerm("AutocompleteGUI", 0),
+            new DefaultTerm("BinaryRangeSearcher", 0),
+            new DefaultTerm("DefaultTerm", 0),
+            new DefaultTerm("LinearSearcher", 0),
+            new DefaultTerm("Term", 0),
         };
         ArraySearcher<Term, String> searcher = createArraySearcher(terms, Term::matchesPrefix);
-        assertThat(searcher.findAllMatches("auto").unsorted()).containsExactlyInAnyOrder(terms[4]);
+        assertThat(searcher.findAllMatches("Auto").unsorted()).containsExactlyInAnyOrder(terms[1], terms[2]);
     }
 
     @Test
