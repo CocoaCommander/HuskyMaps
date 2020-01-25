@@ -9,45 +9,49 @@ package autocomplete;
  * @see Term
  */
 public class DefaultTerm implements Term {
-    // TODO: add fields as necessary
-    // TODO (recommended): after adding fields, use IntelliJ to generate toString, equals, and hashCode methods
+   private String query;
+   private long weight;
 
     /**
      * Initializes a term with the given query string and weight.
      * @throws IllegalArgumentException if query is null or weight is negative
      */
     public DefaultTerm(String query, long weight) {
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        if (query = null || weight < 0) {
+            throw new IllegalArgumentException("Query is null or weight is negative.");
+        }
+        this.query = query;
+        this.weight = weight;
     }
 
     @Override
     public String query() {
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return query;
     }
 
     @Override
     public long weight() {
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return weight;
     }
 
     @Override
     public int queryOrder(Term that) {
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        if (that == null) {
+            throw new NullPointerException("Term cannot be null");
+        }
+        return this.query.compareTo(that.query);
     }
 
     @Override
     public int reverseWeightOrder(Term that) {
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        if (that == null) {
+            throw new NullPointerException("Term cannot be null.");
+        }
+        return this.weight.compareTo(that.weight);
     }
 
     @Override
     public int matchesPrefix(String prefix) {
-        // TODO: replace this with your code
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return this.query.compareTo(prefix);
     }
 }
