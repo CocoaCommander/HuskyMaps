@@ -29,15 +29,15 @@ public interface Term {
 
     /**
      * Compares this term's query to the given prefix.
-     *
+     * <p>
      * Mimics the return value semantics of {@link Comparable#compareTo}
      * and {@link Comparator#compare}:
      * <ul>
-     *   <li>0 if query starts with prefix</li>
-     *   <li>negative if query comes before prefix lexicographically</li>
-     *   <li>positive if query comes after prefix lexicographically</li>
+     *   <li> 0 if query starts with prefix</li>
+     *   <li> negative if query comes before prefix lexicographically</li>
+     *   <li> positive if query comes after prefix lexicographically</li>
      * </ul>
-     *
+     * <p>
      * (Does not exactly match their definitions, since it's possible that
      * {@code sgn(a.matchesPrefix(b)) != -sgn(b.matchesPrefix(a))}.)
      */

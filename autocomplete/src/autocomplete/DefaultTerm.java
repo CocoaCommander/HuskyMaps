@@ -17,7 +17,7 @@ public class DefaultTerm implements Term {
      * @throws IllegalArgumentException if query is null or weight is negative
      */
     public DefaultTerm(String query, long weight) {
-        if (query = null || weight < 0) {
+        if (query == null || weight < 0) {
             throw new IllegalArgumentException("Query is null or weight is negative.");
         }
         this.query = query;
@@ -39,7 +39,7 @@ public class DefaultTerm implements Term {
         if (that == null) {
             throw new NullPointerException("Term cannot be null");
         }
-        return this.query.compareTo(that.query);
+        return this.query.compareTo(that.query());
     }
 
     @Override
@@ -47,11 +47,14 @@ public class DefaultTerm implements Term {
         if (that == null) {
             throw new NullPointerException("Term cannot be null.");
         }
-        return this.weight.compareTo(that.weight);
+        return ((Long) that.weight()).compareTo(this.weight);
     }
 
     @Override
     public int matchesPrefix(String prefix) {
+        if (this.query.startsWith(prefix)) {
+            return 0;
+        }
         return this.query.compareTo(prefix);
     }
 }
