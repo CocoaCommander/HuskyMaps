@@ -9,21 +9,6 @@ import java.util.Comparator;
  */
 public class BinaryRangeSearcher<T, U> implements ArraySearcher<T, U> {
 
-    public class BSTNode {
-        public int index;
-        public T term;
-        public BSTNode left;
-        public BSTNode right;
-
-        public BSTNode(T term, int index) {
-            this.index = index;
-            this.term = term;
-            this.left = null;
-            this.right = null;
-        }
-    }
-
-    private BSTNode overallRoot;
     private T[] termArray;
     private Matcher<T, U> matcher;
 
@@ -49,19 +34,8 @@ public class BinaryRangeSearcher<T, U> implements ArraySearcher<T, U> {
     public static <T, U> BinaryRangeSearcher<T, U> forUnsortedArray(T[] array,
                                                                     Comparator<T> sortUsing,
                                                                     Matcher<T, U> matchUsing) {
-        if (array == null) {
-            throw new IllegalArgumentException("Array cannot be null");
-        }
         if (sortUsing == null) {
             throw new IllegalArgumentException("Comparator cannot be null");
-        }
-        if (matchUsing == null) {
-            throw new IllegalArgumentException("Matcher cannot be null");
-        }
-        for (T item : array) {
-            if (item == null) {
-                throw new IllegalArgumentException("Array cannot be null");
-            }
         }
         Arrays.sort(array, sortUsing);
         return new BinaryRangeSearcher<>(array, matchUsing);
@@ -89,63 +63,51 @@ public class BinaryRangeSearcher<T, U> implements ArraySearcher<T, U> {
         if (matcher == null) {
             throw new IllegalArgumentException("Matcher cannot be null");
         }
-        this.overallRoot = buildTree(array, 0, array.length - 1);
         this.termArray = array;
         this.matcher = matcher;
-    }
-
-    private BSTNode buildTree(T[] array, int first, int last) {
-        if (first > last) {
-            return null;
-        }
-        int mid = (first + last) / 2;
-        BSTNode node = new BSTNode(array[mid], mid);
-        node.left = buildTree(array, first, mid - 1);
-        node.right = buildTree(array, mid + 1, last);
-        return node;
     }
 
     public MatchResult<T> findAllMatches(U target) {
         if (target == null) {
             throw new IllegalArgumentException("target cannot be null");
         }
-        int end = getFirst(this.overallRoot, target);
-        int start = getLast(this.overallRoot, target);
-        MatchResult<T> matches = new MatchResult<T>(this.termArray, start, end);
+        int start = getFirst(0, this.termArray.length - 1, target);
+        int end = getLast(0, this.termArray.length - 1, target);
+        MatchResult<T> matches = new MatchResult<T>(this.termArray, start, end + 1);
         return matches;
     }
 
-    private int getFirst(BSTNode node, U target) {
-        if (node.right == null &&
-            node.left == null) {
-            if (matcher.match(node.term, target) == 0) {
-                return node.index + 1;
-            } else {
-                return 0;
-            }
-        } else if (matcher.match(node.right.term, target) == 0) {
-            return node.right.index + 1;
-        } else if (matcher.match(node.term, target) >= 0) {
-            return getFirst(node.left, target);
+    private int getFirst(int front, int back, U target) {
+        if (front > back) {
+            return 0;
+        }
+        int mid = (front + back) / 2;
+        if (matcher.match(termArray[mid], target) == 0 &&
+            (mid == 0 || (matcher.match(termArray[mid - 1], target) < 0))) {
+            return mid;
+        } else if (matcher.match(termArray[mid], target) > 0) {
+            return getFirst(front, mid - 1, target);
+        } else if (matcher.match(termArray[mid], target) < 0) {
+            return getFirst(mid + 1, back, target);
         } else {
-            return getFirst(node.right, target);
+            return getFirst(front, mid - 1, target);
         }
     }
 
-    private int getLast(BSTNode node, U target) {
-        if (node.right == null &&
-            node.left == null) {
-            if (matcher.match(node.term, target) == 0) {
-                return node.index;
-            } else {
-                return 0;
-            }
-        } else if (matcher.match(node.left.term, target) == 0) {
-            return node.left.index;
-        } else if (matcher.match(node.term, target) < 0) {
-            return getLast(node.right, target);
+    private int getLast(int front, int back, U target) {
+        if (front > back) {
+            return -1;
+        }
+        int mid = (front + back) / 2;
+        if (matcher.match(termArray[mid], target) == 0 &&
+            (mid == termArray.length - 1 || (matcher.match(termArray[mid + 1], target) > 0))) {
+            return mid;
+        } else if (matcher.match(termArray[mid], target) > 0) {
+            return getLast(front, mid - 1, target);
+        } else if (matcher.match(termArray[mid], target) < 0) {
+            return getLast(mid + 1, back, target);
         } else {
-            return getLast(node.left, target);
+            return getLast(mid + 1, back, target);
         }
     }
 
