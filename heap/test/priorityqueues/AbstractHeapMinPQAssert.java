@@ -44,7 +44,6 @@ public abstract class AbstractHeapMinPQAssert<T>
                     "(Expected at least %d.)",
                 heap.size(), endIndex);
         }
-        // TODO (optional): implement invariant checks
         return null;
     }
 
