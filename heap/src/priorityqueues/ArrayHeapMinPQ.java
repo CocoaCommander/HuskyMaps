@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T> {
     // IMPORTANT: Do not rename these fields or change their visibility.
@@ -12,15 +11,13 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
     static final int START_INDEX = 1;
     List<PriorityNode<T>> items;
     private int size;
-    private HashMap allItems;
-    private HashSet justItems;
+    private HashMap<T, Integer> allItems;
 
     public ArrayHeapMinPQ() {
         this.items = new ArrayList<>();
         this.items.add(null);
         this.size = 0;
-        this.allItems = new HashMap<PriorityNode<T>, Integer>();
-        this.justItems = new HashSet<T>();
+        this.allItems = new HashMap<T, Integer>();
     }
 
     // Here's a method stub that may be useful. Feel free to change or remove it, if you wish.
@@ -47,14 +44,13 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
      */
     @Override
     public void add(T item, double priority) {
-        if (justItems.contains(item) || item == null) {
+        if (this.contains(item) || item == null) {
             throw new IllegalArgumentException("Item can not be null or already in the Priority Queue");
         }
-        justItems.add(item);
         PriorityNode<T> toBack = new PriorityNode<>(item, priority);
         size++;
-        items.add(size, (PriorityNode<T>) toBack);
-        allItems.put(toBack, percolateUp(size));
+        items.add(size, toBack);
+        allItems.put(item, percolateUp(size));
     }
 
     private int percolateUp(int back) {
@@ -71,7 +67,7 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
      */
     @Override
     public boolean contains(T item) {
-        return justItems.contains(item);
+        return allItems.containsKey(item);
     }
 
     /**
@@ -97,8 +93,7 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
         if (size == 0) {
             throw new NoSuchElementException("PQ is empty");
         }
-        allItems.remove(items.get(START_INDEX));
-        justItems.remove(items.get(START_INDEX).getItem());
+        allItems.remove(items.get(START_INDEX).getItem());
         T min = items.get(START_INDEX).getItem();
         items.set(START_INDEX, items.get(size));
         items.remove(size);
@@ -132,9 +127,8 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
         if (!this.contains(item)) {
             throw new NoSuchElementException("Item is not in PQ");
         }
-        int index = (int) allItems.get(item);
-        allItems.remove(item);
-        PriorityNode toChange = items.get(index);
+        int index = allItems.get(item);
+        PriorityNode<T> toChange = items.get(index);
         if (toChange.getPriority() != priority) {
             toChange.setPriority(priority);
             items.set(index, toChange);
