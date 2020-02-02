@@ -99,7 +99,9 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
         items.remove(size);
         size--;
         int newIndex = percolateDown(START_INDEX);
-        allItems.replace(items.get(newIndex).getItem(), newIndex);
+        if (size != 0) {
+            allItems.replace(items.get(newIndex).getItem(), newIndex);
+        }
         return min;
     }
 
