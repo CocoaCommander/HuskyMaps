@@ -98,11 +98,12 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
         items.set(START_INDEX, items.get(size));
         items.remove(size);
         size--;
-        percolateDown(START_INDEX);
+        int newIndex = percolateDown(START_INDEX);
+        allItems.replace(items.get(newIndex).getItem(), newIndex);
         return min;
     }
 
-    private void percolateDown(int current) {
+    private int percolateDown(int current) {
         while (2 * current <= size) {
             int down = 2 * current;
             if (down < size && compare(down + 1, down)) {
@@ -114,6 +115,7 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
             swap(current, down);
             current = down;
         }
+        return current;
     }
 
     /**
@@ -128,16 +130,18 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
             throw new NoSuchElementException("Item is not in PQ");
         }
         int index = allItems.get(item);
+        int newIndex = index;
         PriorityNode<T> toChange = items.get(index);
         if (toChange.getPriority() != priority) {
             toChange.setPriority(priority);
             items.set(index, toChange);
             if (compare(index, index / 2)) {
-                percolateUp(index);
-            } else {
-                percolateDown(index);
+                newIndex = percolateUp(index);
+            } else if (compare(index / 2, index)) {
+                newIndex = percolateDown(index);
             }
         }
+        allItems.replace(item, newIndex);
     }
 
     /**
