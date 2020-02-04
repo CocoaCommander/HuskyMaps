@@ -32,8 +32,8 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
         items.set(b, temp);
     }
 
-    private boolean compare(int current, int up) {
-        return items.get(current).getPriority() < items.get(up).getPriority();
+    private boolean compare(int thisPriority, int thatPriority) {
+        return items.get(thisPriority).getPriority() < items.get(thatPriority).getPriority();
     }
 
     /**
@@ -137,10 +137,10 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
         if (toChange.getPriority() != priority) {
             toChange.setPriority(priority);
             items.set(index, toChange);
-            if (compare(index, index / 2)) {
-                newIndex = percolateUp(index);
-            } else if (compare(index / 2, index)) {
+            if (index == 1 || compare(index / 2, index)) {
                 newIndex = percolateDown(index);
+            } else if (compare(index, index / 2)) {
+                newIndex = percolateUp(index);
             }
         }
         allItems.replace(item, newIndex);
