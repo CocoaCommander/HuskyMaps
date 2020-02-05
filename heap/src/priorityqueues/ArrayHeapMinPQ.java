@@ -137,9 +137,9 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
         if (toChange.getPriority() != priority) {
             toChange.setPriority(priority);
             items.set(index, toChange);
-            if (index == 1 || compare(index / 2, index)) {
+            if (index == 1 || compare(index, index / 2)) {
                 newIndex = percolateDown(index);
-            } else if (compare(index, index / 2)) {
+            } else if (compare(index / 2, index)) {
                 newIndex = percolateUp(index);
             }
         }
