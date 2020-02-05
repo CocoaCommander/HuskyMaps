@@ -33,7 +33,7 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
     }
 
     private boolean compare(int thisPriority, int thatPriority) {
-        return items.get(thisPriority).getPriority() < items.get(thatPriority).getPriority();
+        return items.get(thisPriority).getPriority() > items.get(thatPriority).getPriority();
     }
 
     /**
@@ -54,7 +54,7 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
     }
 
     private int percolateUp(int back) {
-        while (back > 1 && compare(back, back / 2)) {
+        while (back > 1 && compare(back / 2, back)) {
             swap(back, back / 2);
             back = back / 2;
         }
@@ -108,10 +108,10 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
     private int percolateDown(int current) {
         while (2 * current <= size) {
             int down = 2 * current;
-            if (down < size && compare(down + 1, down)) {
+            if (down < size && compare(down, down + 1)) {
                 down++;
             }
-            if (compare(current, down)) {
+            if (!compare(current, down)) {
                 break;
             }
             swap(current, down);

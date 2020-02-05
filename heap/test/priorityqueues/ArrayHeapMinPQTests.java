@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -285,6 +286,25 @@ public class ArrayHeapMinPQTests extends BaseTest {
             List<Integer> output = removeAll(pq);
             assertThat(output).containsExactly(correctOrdering);
             assertThat(pq).isValid();
+        }
+
+        @Test
+        void itemsWithSamePriority() {
+            ExtrinsicMinPQ<Integer> pq = createMinPQ();
+            ExtrinsicMinPQ<Integer> pqCheck = new NaiveMinPQ<Integer>();
+            ArrayList check1 = new ArrayList<Integer>();
+            ArrayList check2 = new ArrayList<Integer>();
+            for (int i = 0; i < 6; i++) {
+                double priority = 1;
+                int item = i;
+                pq.add(item, priority);
+                pqCheck.add(item, priority);
+            }
+            while (!pq.isEmpty()) {
+                check1.add(pq.removeMin());
+                check2.add(pqCheck.removeMin());
+            }
+            assertThat(check1).isEqualTo(check2);
         }
     }
 
