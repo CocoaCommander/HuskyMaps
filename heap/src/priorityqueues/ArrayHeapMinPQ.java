@@ -29,7 +29,10 @@ public class ArrayHeapMinPQ<T extends Comparable<T>> implements ExtrinsicMinPQ<T
     private void swap(int a, int b) {
         PriorityNode<T> temp = items.get(a);
         items.set(a, items.get(b));
+        allItems.replace(items.get(b).getItem(), a);
         items.set(b, temp);
+        allItems.replace(temp.getItem(), b);
+
     }
 
     private boolean compare(int thisPriority, int thatPriority) {
