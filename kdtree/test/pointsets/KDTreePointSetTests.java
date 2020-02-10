@@ -9,7 +9,7 @@ import java.util.List;
 
 public class KDTreePointSetTests extends BaseTest {
     protected PointSet<Point> createPointSet(List<Point> points) {
-        return new KDTreePointSet<>(points);
+        return new NaivePointSet<>(points);
     }
 
     @Test
