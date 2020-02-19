@@ -49,9 +49,12 @@ public class AStarPathFinder<VERTEX> extends ShortestPathFinder<VERTEX> {
                     distances.put(neighbor.to(), neighbor.weight() +
                         distances.get(min));
                     prevPoint.put(neighbor.to(), min);
-                    fringe.changePriority(neighbor.to(), neighbor.weight() +
-                        distances.get(min) +
-                        this.graph.estimatedDistanceToGoal(min, end));
+                    if (fringe.contains(neighbor.to())) {
+                        fringe.changePriority(neighbor.to(), neighbor.weight() +
+                            distances.get(min) +
+                            this.graph.estimatedDistanceToGoal(min, end));
+                    }
+
                 } else if (!distances.containsKey(neighbor.to())) {
                     distances.put(neighbor.to(), neighbor.weight() +
                         distances.get(min));
