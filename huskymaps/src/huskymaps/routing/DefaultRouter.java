@@ -10,6 +10,8 @@ import pointsets.KDTreePointSet;
 import pointsets.Point;
 import pointsets.PointSet;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 import static huskymaps.utils.Spatial.projectToPoint;
@@ -19,10 +21,21 @@ import static huskymaps.utils.Spatial.projectToPoint;
  */
 public class DefaultRouter extends Router {
     private StreetMapGraph graph;
+    private PointSet pointSet;
+    private ShortestPathFinder finder;
+    //private Map<NodePoint, Node> pointToNode;
 
     public DefaultRouter(StreetMapGraph graph) {
         this.graph = graph;
-        // TODO: replace this with your code
+        this.finder = createPathFinder(graph);
+        List points = new ArrayList<NodePoint>();
+        for (Node node : this.graph.allNodes()) {
+            if (!this.graph.neighbors(node).isEmpty()) {
+                NodePoint p = createNodePoint(node);
+                points.add(p);
+            }
+        }
+        this.pointSet = createPointSet(points);
     }
 
     @Override
@@ -46,20 +59,16 @@ public class DefaultRouter extends Router {
     protected Node closest(Coordinate c) {
         // Project to x and y coordinates instead of using raw lat and lon for finding closest points:
         Point p = projectToPoint(c, Point::new);
-        // TODO: replace this with your code
-        return null;
+        NodePoint closest = (NodePoint) this.pointSet.nearest(p);
+        return closest.node();
     }
 
     @Override
     public List<Node> shortestPath(Coordinate start, Coordinate end) {
         Node src = closest(start);
         Node dest = closest(end);
-        // TODO: replace this with your code
-        /*
-        Feel free to use any arbitrary duration for your path finding timeout; we don't expect
-        queries to take more than a few seconds, so e.g. 10-30 seconds is pretty reasonable.
-         */
-        return List.of();
+        Duration timeout = Duration.ofSeconds(30);
+        return this.finder.findShortestPath(src, dest, timeout).solution();
     }
 
     @Override

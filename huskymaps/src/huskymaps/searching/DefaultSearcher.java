@@ -6,14 +6,36 @@ import autocomplete.Term;
 import huskymaps.graph.Node;
 import huskymaps.graph.StreetMapGraph;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @see Searcher
  */
 public class DefaultSearcher extends Searcher {
+
+    private Autocomplete terms;
+    private StreetMapGraph graph;
+
     public DefaultSearcher(StreetMapGraph graph) {
-        // TODO: replace this with your code
+        this.graph = graph;
+        List<Term> allTerms = new LinkedList<>();
+        int size = 0;
+        for (Node node : graph.allNodes()) {
+            if (node.name() != null && node.importance() >= 0) {
+                Term term = createTerm(node.name(), node.importance());
+                allTerms.add(term);
+                size++;
+            }
+        }
+        Term[] t = new Term[size];
+        for (int i = 0; i < size; i++) {
+            t[i] = allTerms.remove(0);
+        }
+        this.terms = createAutocomplete(t);
     }
 
     @Override
@@ -28,13 +50,24 @@ public class DefaultSearcher extends Searcher {
 
     @Override
     public List<String> getLocationsByPrefix(String prefix) {
-        // TODO: replace this with your code
-        return List.of();
+        Term[] matches = this.terms.findMatchesForPrefix(prefix);
+        Set<String> locByPre = new HashSet<>();
+        for (Term term : matches) {
+            locByPre.add(term.query());
+        }
+        List<String> allPre = new ArrayList<>();
+        allPre.addAll(locByPre);
+        return allPre;
     }
 
     @Override
     public List<Node> getLocations(String locationName) {
-        // TODO: replace this with your code
-        return List.of();
+        List<Node> allLoc = new ArrayList<>();
+        for (Node node : this.graph.allNodes()) {
+            if (node.name().equals(locationName)) {
+                allLoc.add(node);
+            }
+        }
+        return allLoc;
     }
 }

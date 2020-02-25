@@ -42,6 +42,7 @@ public class AStarPathFinder<VERTEX> extends ShortestPathFinder<VERTEX> {
             }
             states++;
             for (WeightedEdge<VERTEX> neighbor : this.graph.neighbors(min)) {
+
                 if (distances.containsKey(neighbor.to()) &&
                     distances.get(neighbor.to()) >
                         neighbor.weight() + distances.get(min)) {
@@ -49,7 +50,9 @@ public class AStarPathFinder<VERTEX> extends ShortestPathFinder<VERTEX> {
                     distances.put(neighbor.to(), neighbor.weight() +
                         distances.get(min));
                     prevPoint.put(neighbor.to(), min);
+
                     if (fringe.contains(neighbor.to())) {
+
                         fringe.changePriority(neighbor.to(), neighbor.weight() +
                             distances.get(min) +
                             this.graph.estimatedDistanceToGoal(min, end));
@@ -59,6 +62,7 @@ public class AStarPathFinder<VERTEX> extends ShortestPathFinder<VERTEX> {
                     distances.put(neighbor.to(), neighbor.weight() +
                         distances.get(min));
                     prevPoint.put(neighbor.to(), min);
+
                     fringe.add(neighbor.to(),
                         neighbor.weight() + distances.get(min) +
                             this.graph.estimatedDistanceToGoal(neighbor.to(),
