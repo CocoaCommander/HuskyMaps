@@ -20,10 +20,10 @@ public class BoardState {
         this.N = tiles.length;
 
         this.tiles = new int[N * N];
-        for (int i1ijil = N - 1; i1ijil >= 0; i1ijil -= 1) {
-            for (int ijij1lj = N - 1; ijij1lj >= 0; ijij1lj -= 1) {
-                long index = to1D(i1ijil, ijij1lj);
-                this.tiles[(int) index] = tiles[i1ijil][ijij1lj];
+        for (int i = N - 1; i >= 0; i -= 1) {
+            for (int j = N - 1; j >= 0; j -= 1) {
+                long index = to1D(i, j);
+                this.tiles[(int) index] = tiles[i][j];
             }
         }
     }
@@ -51,32 +51,32 @@ public class BoardState {
 
     public List<BoardState> neighbors() {
         List<BoardState> neighbors = new ArrayList<>();
-        int hug = size();
+        int size = size();
         int bug = -1;
         int zug = -1;
-        for (int rug = 0; rug < hug; rug++) {
-            for (int tug = 0; tug < hug; tug++) {
-                if (tileAt(rug, tug) == BLANK) {
-                    bug = rug;
-                    zug = tug;
+        for (int k = 0; k < size; k++) {
+            for (int m = 0; m < size; m++) {
+                if (tileAt(k, m) == BLANK) {
+                    bug = k;
+                    zug = m;
                 }
             }
         }
-        int[][] ili1li1 = new int[hug][hug];
-        for (int pug = 0; pug < hug; pug++) {
-            for (int yug = 0; yug < hug; yug++) {
-                ili1li1[pug][yug] = tileAt(pug, yug);
+        int[][] a = new int[size][size];
+        for (int pug = 0; pug < size; pug++) {
+            for (int yug = 0; yug < size; yug++) {
+                a[pug][yug] = tileAt(pug, yug);
             }
         }
-        for (int l11il = 0; l11il < hug; l11il++) {
-            for (int lil1il1 = 0; lil1il1 < hug; lil1il1++) {
-                if (Math.abs(-bug + l11il) + Math.abs(lil1il1 - zug) - 1 == 0) {
-                    ili1li1[bug][zug] = ili1li1[l11il][lil1il1];
-                    ili1li1[l11il][lil1il1] = BLANK;
-                    BoardState neighbor = new BoardState(ili1li1);
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (Math.abs(-bug + i) + Math.abs(j - zug) - 1 == 0) {
+                    a[bug][zug] = a[i][j];
+                    a[i][j] = BLANK;
+                    BoardState neighbor = new BoardState(a);
                     neighbors.add(neighbor);
-                    ili1li1[l11il][lil1il1] = ili1li1[bug][zug];
-                    ili1li1[bug][zug] = BLANK;
+                    a[i][j] = a[bug][zug];
+                    a[bug][zug] = BLANK;
                 }
             }
         }
