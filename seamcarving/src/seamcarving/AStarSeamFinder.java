@@ -8,9 +8,7 @@ import graphpathfinding.WeightedEdge;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class AStarSeamFinder extends SeamFinder {
@@ -46,16 +44,15 @@ public class AStarSeamFinder extends SeamFinder {
                 return false;
             }
             Pixel pixel = (Pixel) o;
-            if (isFindVert) {
-                return y == pixel.y;
-            } else {
-                return x == pixel.x;
-            }
+            return x == pixel.x &&
+                y == pixel.y &&
+                Double.compare(pixel.energy, energy) == 0 &&
+                isFindVert == pixel.isFindVert;
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(x, y, energy);
+            return Objects.hash(x, y, energy, isFindVert);
         }
     }
 
@@ -75,13 +72,25 @@ public class AStarSeamFinder extends SeamFinder {
         public List<WeightedEdge<Pixel>> neighbors(Pixel pixel) {
             List<WeightedEdge<Pixel>> neighbors = new ArrayList<>();
             if (pixel.isFindVert) {
-                if (pixel.x == 0) {
+                if (pixel.y == -1) {
+                    for (int i = 0; i < energies.length; i++) {
+                        Pixel next = new Pixel(
+                            i,
+                            0,
+                            energies[i][0],
+                            pixel.isFindVert
+                        );
+                        WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
+                        neighbors.add(edge);
+                    }
+                } else if (pixel.x == 0) {
                     for (int i = 0; i <= 1; i++) {
                         Pixel next = new Pixel(
                             0 + i,
                             pixel.y + 1,
                             energies[0 + i][pixel.y + 1],
-                            pixel.isFindVert);
+                            pixel.isFindVert
+                        );
                         WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
                         neighbors.add(edge);
                     }
@@ -91,29 +100,51 @@ public class AStarSeamFinder extends SeamFinder {
                             pixel.x - i,
                             pixel.y + 1,
                             energies[pixel.x - i][pixel.y + 1],
-                            pixel.isFindVert);
+                            pixel.isFindVert
+                        );
                         WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
                         neighbors.add(edge);
                     }
+                } else if (pixel.y == height) {
+                    Pixel next = new Pixel(
+                        0,
+                        height + 1,
+                        0.0,
+                        pixel.isFindVert);
+                    WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
+                    neighbors.add(edge);
                 } else {
                     for (int i = -1; i <= 1; i++) {
                         Pixel next = new Pixel(
                             pixel.x + i,
                             pixel.y + 1,
                             energies[pixel.x + i][pixel.y + 1],
-                            pixel.isFindVert);
+                            pixel.isFindVert
+                        );
                         WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
                         neighbors.add(edge);
                     }
                 }
             } else {
-                if (pixel.y == 0) {
+                if (pixel.x == -1) {
+                    for (int i = 0; i < energies[0].length; i++) {
+                        Pixel next = new Pixel(
+                            0,
+                            i,
+                            energies[0][i],
+                            pixel.isFindVert
+                        );
+                        WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
+                        neighbors.add(edge);
+                    }
+                } else if (pixel.y == 0) {
                     for (int i = 0; i <= 1; i++) {
                         Pixel next = new Pixel(
                             pixel.x + 1,
                             pixel.y + i,
                             energies[pixel.x + 1][pixel.y + i],
-                            pixel.isFindVert);
+                            pixel.isFindVert
+                        );
                         WeightedEdge<Pixel> edge = new WeightedEdge(pixel, next, next.energy);
                         neighbors.add(edge);
                     }
@@ -123,17 +154,27 @@ public class AStarSeamFinder extends SeamFinder {
                             pixel.x + 1,
                             pixel.y - i,
                             energies[pixel.x + 1][pixel.y - i],
-                            pixel.isFindVert);
+                            pixel.isFindVert
+                        );
                         WeightedEdge<Pixel> edge = new WeightedEdge(pixel, next, next.energy);
                         neighbors.add(edge);
                     }
+                } else if (pixel.x == width) {
+                    Pixel next = new Pixel(
+                        width + 1,
+                        0,
+                        0.0,
+                        pixel.isFindVert);
+                    WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
+                    neighbors.add(edge);
                 } else {
                     for (int i = -1; i <= 1; i++) {
                         Pixel next = new Pixel(
                             pixel.x + 1,
                             pixel.y + i,
-                            energies[pixel.x + 1][pixel.y - i],
-                            pixel.isFindVert);
+                            energies[pixel.x + 1][pixel.y + i],
+                            pixel.isFindVert
+                        );
                         WeightedEdge<Pixel> edge = new WeightedEdge(pixel, next, next.energy);
                         neighbors.add(edge);
                     }
@@ -165,26 +206,20 @@ public class AStarSeamFinder extends SeamFinder {
          * At the end get the y values and add them to the list to return
          */
 
-        int goal = energies.length - 1;
-        double minEnergy = Double.MAX_VALUE;
-        Map<Double, List<Pixel>> weightToSolution = new HashMap<>();
         List<Integer> seam = new ArrayList<>();
-
+        Pixel start = new Pixel(-1, 0, 0.0, false);
+        Pixel end = new Pixel(energies.length, 0, 0.0, false);
         PictureGraph picture = new PictureGraph(energies);
-        ShortestPathFinder<Pixel> pathFinder = createPathFinder(picture);
-
-
-        for (int i = 0; i < energies[0].length; i++) {
-            Pixel start = new Pixel(0, i, energies[0][i], false);
-            Pixel end = new Pixel(goal, 0, 0.0, false);
-            ShortestPathResult result = pathFinder.findShortestPath(start, end, Duration.ofSeconds(10));
-            double weight = result.solutionWeight();
-            weightToSolution.put(weight, result.solution());
-            if (weight < minEnergy) {
-                minEnergy = weight;
-            }
-        }
-        for (Pixel p : weightToSolution.get(minEnergy)) {
+        ShortestPathFinder<Pixel> finder = createPathFinder(picture);
+        ShortestPathResult<Pixel> result = finder.findShortestPath(
+            start,
+            end,
+            Duration.ofSeconds(10)
+        );
+        List<Pixel> seamPixels = result.solution();
+        seamPixels.remove(0);
+        seamPixels.remove(seamPixels.size() - 1);
+        for (Pixel p : seamPixels) {
             seam.add(p.y);
         }
         return seam;
@@ -198,26 +233,20 @@ public class AStarSeamFinder extends SeamFinder {
 
     @Override
     public List<Integer> findVerticalSeam(double[][] energies) {
-        int goal = energies[0].length - 1;
-        double minEnergy = Double.MAX_VALUE;
-        Map<Double, List<Pixel>> weightToSolution = new HashMap<>();
         List<Integer> seam = new ArrayList<>();
-
+        Pixel start = new Pixel(0, -1, 0.0, true);
+        Pixel end = new Pixel(0, energies[0].length, 0.0, true);
         PictureGraph picture = new PictureGraph(energies);
-        ShortestPathFinder<Pixel> pathFinder = createPathFinder(picture);
-
-
-        for (int i = 0; i < energies.length; i++) {
-            Pixel start = new Pixel(i, 0, energies[i][0], true);
-            Pixel end = new Pixel(0, goal, 0.0, true);
-            ShortestPathResult result = pathFinder.findShortestPath(start, end, Duration.ofSeconds(10));
-            double weight = result.solutionWeight();
-            weightToSolution.put(weight, result.solution());
-            if (weight < minEnergy) {
-                minEnergy = weight;
-            }
-        }
-        for (Pixel p : weightToSolution.get(minEnergy)) {
+        ShortestPathFinder<Pixel> finder = createPathFinder(picture);
+        ShortestPathResult<Pixel> result = finder.findShortestPath(
+            start,
+            end,
+            Duration.ofSeconds(10)
+        );
+        List<Pixel> seamPixels = result.solution();
+        seamPixels.remove(0);
+        seamPixels.remove(seamPixels.size() - 1);
+        for (Pixel p : seamPixels) {
             seam.add(p.x);
         }
         return seam;
