@@ -72,112 +72,122 @@ public class AStarSeamFinder extends SeamFinder {
         public List<WeightedEdge<Pixel>> neighbors(Pixel pixel) {
             List<WeightedEdge<Pixel>> neighbors = new ArrayList<>();
             if (pixel.isFindVert) {
-                if (pixel.y == -1) {
-                    for (int i = 0; i < energies.length; i++) {
-                        Pixel next = new Pixel(
-                            i,
-                            0,
-                            energies[i][0],
-                            pixel.isFindVert
-                        );
-                        WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
-                        neighbors.add(edge);
-                    }
-                } else if (pixel.x == 0) {
-                    for (int i = 0; i <= 1; i++) {
-                        Pixel next = new Pixel(
-                            0 + i,
-                            pixel.y + 1,
-                            energies[0 + i][pixel.y + 1],
-                            pixel.isFindVert
-                        );
-                        WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
-                        neighbors.add(edge);
-                    }
-                } else if (pixel.x == width) {
-                    for (int i = 0; i <= 1; i++) {
-                        Pixel next = new Pixel(
-                            pixel.x - i,
-                            pixel.y + 1,
-                            energies[pixel.x - i][pixel.y + 1],
-                            pixel.isFindVert
-                        );
-                        WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
-                        neighbors.add(edge);
-                    }
-                } else if (pixel.y == height) {
-                    Pixel next = new Pixel(
-                        0,
-                        height + 1,
-                        0.0,
-                        pixel.isFindVert);
-                    WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
-                    neighbors.add(edge);
-                } else {
-                    for (int i = -1; i <= 1; i++) {
-                        Pixel next = new Pixel(
-                            pixel.x + i,
-                            pixel.y + 1,
-                            energies[pixel.x + i][pixel.y + 1],
-                            pixel.isFindVert
-                        );
-                        WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
-                        neighbors.add(edge);
-                    }
-                }
+                neighbors = vertNeighbors(pixel, neighbors);
             } else {
-                if (pixel.x == -1) {
-                    for (int i = 0; i < energies[0].length; i++) {
-                        Pixel next = new Pixel(
-                            0,
-                            i,
-                            energies[0][i],
-                            pixel.isFindVert
-                        );
-                        WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
-                        neighbors.add(edge);
-                    }
-                } else if (pixel.y == 0) {
-                    for (int i = 0; i <= 1; i++) {
-                        Pixel next = new Pixel(
-                            pixel.x + 1,
-                            pixel.y + i,
-                            energies[pixel.x + 1][pixel.y + i],
-                            pixel.isFindVert
-                        );
-                        WeightedEdge<Pixel> edge = new WeightedEdge(pixel, next, next.energy);
-                        neighbors.add(edge);
-                    }
-                } else if (pixel.y == height) {
-                    for (int i = 0; i <= 1; i++) {
-                        Pixel next = new Pixel(
-                            pixel.x + 1,
-                            pixel.y - i,
-                            energies[pixel.x + 1][pixel.y - i],
-                            pixel.isFindVert
-                        );
-                        WeightedEdge<Pixel> edge = new WeightedEdge(pixel, next, next.energy);
-                        neighbors.add(edge);
-                    }
-                } else if (pixel.x == width) {
+                neighbors = horizNeighbors(pixel, neighbors);
+            }
+            return neighbors;
+        }
+
+        private List<WeightedEdge<Pixel>> vertNeighbors(Pixel pixel, List<WeightedEdge<Pixel>> neighbors) {
+            if (pixel.y == -1) {
+                for (int i = 0; i < energies.length; i++) {
                     Pixel next = new Pixel(
-                        width + 1,
+                        i,
                         0,
-                        0.0,
-                        pixel.isFindVert);
+                        energies[i][0],
+                        pixel.isFindVert
+                    );
                     WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
                     neighbors.add(edge);
-                } else {
-                    for (int i = -1; i <= 1; i++) {
-                        Pixel next = new Pixel(
-                            pixel.x + 1,
-                            pixel.y + i,
-                            energies[pixel.x + 1][pixel.y + i],
-                            pixel.isFindVert
-                        );
-                        WeightedEdge<Pixel> edge = new WeightedEdge(pixel, next, next.energy);
-                        neighbors.add(edge);
-                    }
+                }
+            } else if (pixel.x == 0 && pixel.y != height) {
+                for (int i = 0; i <= 1; i++) {
+                    Pixel next = new Pixel(
+                        0 + i,
+                        pixel.y + 1,
+                        energies[0 + i][pixel.y + 1],
+                        pixel.isFindVert
+                    );
+                    WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
+                    neighbors.add(edge);
+                }
+            } else if (pixel.x == width && pixel.y != height) {
+                for (int i = 0; i <= 1; i++) {
+                    Pixel next = new Pixel(
+                        pixel.x - i,
+                        pixel.y + 1,
+                        energies[pixel.x - i][pixel.y + 1],
+                        pixel.isFindVert
+                    );
+                    WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
+                    neighbors.add(edge);
+                }
+            } else if (pixel.y == height) {
+                Pixel next = new Pixel(
+                    0,
+                    height + 1,
+                    0.0,
+                    pixel.isFindVert);
+                WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
+                neighbors.add(edge);
+            } else {
+                for (int i = -1; i <= 1; i++) {
+                    Pixel next = new Pixel(
+                        pixel.x + i,
+                        pixel.y + 1,
+                        energies[pixel.x + i][pixel.y + 1],
+                        pixel.isFindVert
+                    );
+                    WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
+                    neighbors.add(edge);
+                }
+            }
+            return neighbors;
+        }
+
+        private List<WeightedEdge<Pixel>> horizNeighbors(Pixel pixel, List<WeightedEdge<Pixel>> neighbors) {
+            if (pixel.x == -1) {
+                for (int i = 0; i < energies[0].length; i++) {
+                    Pixel next = new Pixel(
+                        0,
+                        i,
+                        energies[0][i],
+                        pixel.isFindVert
+                    );
+                    WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
+                    neighbors.add(edge);
+                }
+            } else if (pixel.y == 0 && pixel.x != width) {
+                for (int i = 0; i <= 1; i++) {
+                    Pixel next = new Pixel(
+                        pixel.x + 1,
+                        pixel.y + i,
+                        energies[pixel.x + 1][pixel.y + i],
+                        pixel.isFindVert
+                    );
+                    WeightedEdge<Pixel> edge = new WeightedEdge(pixel, next, next.energy);
+                    neighbors.add(edge);
+                }
+            } else if (pixel.y == height && pixel.x != width) {
+                for (int i = 0; i <= 1; i++) {
+                    Pixel next = new Pixel(
+                        pixel.x + 1,
+                        pixel.y - i,
+                        energies[pixel.x + 1][pixel.y - i],
+                        pixel.isFindVert
+                    );
+                    WeightedEdge<Pixel> edge = new WeightedEdge(pixel, next, next.energy);
+                    neighbors.add(edge);
+                }
+            } else if (pixel.x == width) {
+                Pixel next = new Pixel(
+                    width + 1,
+                    0,
+                    0.0,
+                    pixel.isFindVert);
+                WeightedEdge<Pixel> edge = new WeightedEdge<>(pixel, next, next.energy);
+                neighbors.add(edge);
+            } else {
+                for (int i = -1; i <= 1; i++) {
+                    Pixel next = new Pixel(
+                        pixel.x + 1,
+                        pixel.y + i,
+                        energies[pixel.x + 1][pixel.y + i],
+                        pixel.isFindVert
+                    );
+                    WeightedEdge<Pixel> edge = new WeightedEdge(pixel, next, next.energy);
+                    neighbors.add(edge);
                 }
             }
             return neighbors;
